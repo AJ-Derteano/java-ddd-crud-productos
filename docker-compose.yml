@@ -1,25 +1,23 @@
-version: '3.8'
-
 services:
   # Servicio de la aplicación
   app:
-    build: .
+    image: derteano/productos-ddd
     container_name: productos-api
     depends_on:
       - postgres
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/productos_db
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=admin
     ports:
-      - "8080:8080"
+      - '8081:8000'
     networks:
       - productos-network
     # Reiniciar el contenedor si falla
     restart: always
     # Esperar a que la base de datos esté lista
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
       interval: 30s
       timeout: 10s
       retries: 5
@@ -30,12 +28,13 @@ services:
     container_name: postgres
     environment:
       - POSTGRES_DB=productos_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./db-init:/docker-entrypoint-initdb.d
     networks:
       - productos-network
     # Reiniciar el contenedor si falla
@@ -43,7 +42,7 @@ services:
     # Configuración para mejor rendimiento
     command: postgres -c max_connections=100 -c shared_buffers=128MB
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -56,7 +55,7 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@example.com
       - PGADMIN_DEFAULT_PASSWORD=admin
     ports:
-      - "5050:80"
+      - '5050:80'
     depends_on:
       - postgres
     networks:

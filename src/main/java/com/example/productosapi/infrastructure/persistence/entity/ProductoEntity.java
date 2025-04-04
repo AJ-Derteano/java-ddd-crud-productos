@@ -17,7 +17,7 @@ import java.util.UUID;
  * Entidad JPA para la tabla de productos
  */
 @Entity
-@Table(name = "producto2")
+@Table(name = "producto")
 @Data
 @Builder
 @NoArgsConstructor
